@@ -2,9 +2,10 @@ import aiohttp
 import asyncio
 import concurrent
 import urllib.parse
+from pyquery import PyQuery as pq
+
 
 class Scraper:
-
     def __init__(self, queue):
         self._finised = False
         self.doc_queue = queue
@@ -26,7 +27,7 @@ class Scraper:
         try:
             session = aiohttp.ClientSession()
             response = yield from session.get(self._get_query_url())
-            assert(response.status == 200)
+            assert (response.status == 200)
             text = yield from response.text()
         finally:
             yield from session.close()
@@ -38,8 +39,36 @@ class Scraper:
         yield from self._generate_docs(xml_data)
 
     @asyncio.coroutine
+    def _get_txt_doc_content(self, doc_text_url):
+        try:
+            session = aiohttp.ClientSession()
+            response = yield from session.get(doc_text_url)
+            assert (response.status == 200)
+            text = yield from response.text()
+        finally:
+            yield from session.close()
+            return text
+
+    def _retrieve_txt_docs(self, xml_data):
+        src = pq(xml_data.encode('utf-8'))
+
+        for doc in src("document"):
+            doc_text_content = yield from self._get_txt_doc_content(doc.attrib.get("edesky_text_url"))
+
+            doc = {
+                "doc_name": doc.attrib.get("name"),
+                "doc_text_url": doc.attrib.get("edesky_text_url"),
+                "doc_orig_url": doc.attrib.get("orig_url"),
+                "doc_text_content": doc_text_content
+            }
+
+            yield doc
+
+    @asyncio.coroutine
     def _generate_docs(self, xml_data):
-        for doc in ["Bagr", "Trol"]:
+
+        for doc in self._retrieve_txt_docs(xml_data):
             yield from self.doc_queue.put(doc)
+
         # Sent poisonous pill
         yield from self.doc_queue.put(None)

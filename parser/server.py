@@ -15,8 +15,8 @@ def generate_data(loop, executor):
     try:
         scraper_task = loop.create_task(scraper.start_scraping())
         parser_task = loop.create_task(parser.start_processing())
-        yield from asyncio.gather(scraper_task, parser_task, loop = loop)
-    except CancelledError:
+        yield from asyncio.gather(scraper_task, loop = loop)
+    except asyncio.CancelledError:
             pass
     finally:
         scraper_task.cancel()
@@ -34,6 +34,6 @@ if __name__ == '__main__':
     try:
         loop.run_until_complete(run_task)
     except KeyboardInterrupt as e:
-        listen_task.cancel()
+        run_task.cancel()
 
     executor.shutdown()
