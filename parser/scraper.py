@@ -12,23 +12,24 @@ class Scraper:
         self.doc_queue = queue
 
     # TODO: iterate through parameters, pages
-    def _get_query_url(self):
+    def _get_query_url(self, page):
         qdict = {
             "keywords": "prodej",
-            "created_from": "2016-05-04",
+            "created_from": "2016-04-04",
             "dashboard_id": "59",
-            "order": "score",
+            "order": "date",
             "search_with": "es",
-            "page": "1"
+            "page": page
         }
         qstring = urllib.parse.urlencode(qdict)
         return "https://edesky.cz/api/v1/documents?" + qstring
 
     @asyncio.coroutine
-    def _do_query(self):
+    def _do_query(self, page):
         try:
             session = aiohttp.ClientSession()
-            response = yield from session.get(self._get_query_url())
+            print(self._get_query_url(page))
+            response = yield from session.get(self._get_query_url(page))
             assert (response.status == 200)
             text = yield from response.text()
         finally:
@@ -37,8 +38,24 @@ class Scraper:
 
     @asyncio.coroutine
     def start_scraping(self):
-        xml_data = yield from self._do_query()
-        yield from self._generate_docs(xml_data)
+        page = 1
+        pages_total = 1
+
+        while page <= pages_total:
+            print("---------------------Scraping page %d" % page)
+            xml_data = yield from self._do_query(page)
+            yield from self._generate_docs(xml_data)
+
+            pages_total = self._get_total_pages(xml_data)
+            page += 1
+
+        # Sent poisonous pill
+        yield from self.doc_queue.put(None)
+
+    def _get_total_pages(self, xml_data):
+        src = pq(xml_data.encode('utf-8'))
+        return int(src("page")[0].attrib.get("total"))
+
 
     @asyncio.coroutine
     def _get_txt_doc_content(self, doc_text_url):
@@ -83,7 +100,5 @@ class Scraper:
             for task in tasks:
                 task.cancel()
             yield from asyncio.wait(tasks)
-            # Sent poisonous pill
-            yield from self.doc_queue.put(None)
 
 
