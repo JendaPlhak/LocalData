@@ -14,9 +14,9 @@ class Scraper:
     # TODO: iterate through parameters, pages
     def _get_query_url(self, page):
         qdict = {
-            "keywords": "prodej",
-            "created_from": "2016-04-04",
-            "dashboard_id": "59",
+            "keywords": "Kč?m2",
+            "created_from": "2016-01-01",
+            # "dashboard_id": "59",
             "order": "date",
             "search_with": "es",
             "page": page
@@ -75,6 +75,7 @@ class Scraper:
 
         doc_with_text = {
             "dashboard_id": doc.attrib.get("dashboard_id"),
+            "edesky_id": doc.attrib.get("edesky_id"),
             "doc_name": doc.attrib.get("name"),
             "doc_text_url": doc.attrib.get("edesky_text_url"),
             "doc_orig_url": doc.attrib.get("orig_url"),

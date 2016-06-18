@@ -54,7 +54,9 @@ PRICE_PATTERN = re.compile(r'(\D|^)(?P<price>\d+|(\d{1,3}(?:[\. ]\d{3})*))([,\.]
 
 def parse_document(data):
     res = {
-        "dashboard_id": data["dashboard_id"]
+        "dashboard_id": data["dashboard_id"],
+        "edesky_id": data["edesky_id"],
+        "type": "sale"
     }
 
     doc_text = data['doc_name']
@@ -64,22 +66,25 @@ def parse_document(data):
     if not name_sale:
         return []
 
-    res["type"] = "sale"
-
-    house_num = HOUSE_NUM_PATTERN.search(doc_content)
-    if house_num:
-        res["estate_id"] = "house_number"
-        res["number"] = house_num.group("num")
+    parcel_num = HOUSE_NUM_PATTERN.search(doc_content)
+    if parcel_num:
+        res["estate_id"] = "parcel_number"
+        res["number"] = parcel_num.group("num")
     else:
-        parcel_num = HOUSE_NUM_PATTERN.search(doc_content)
-        if parcel_num:
-            res["estate_id"] = "parcel_number"
-            res["number"] = parcel_num.group("num")
+        house_num = HOUSE_NUM_PATTERN.search(doc_content)
+        if house_num:
+            res["estate_id"] = "house_number"
+            res["number"] = house_num.group("num")
+        else:
+            return []
 
     price = PRICE_PATTERN.search(doc_content)
     if price:
         res["price"] = price.group("price")
         res["price_type"] = "per_meter" if price.group("type") else "total"
+    else:
+        return []
+
     return [res]
 
 #
