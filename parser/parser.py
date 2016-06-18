@@ -1,5 +1,6 @@
 import asyncio
 import re
+import time
 
 
 class Parser:
@@ -32,8 +33,10 @@ class Parser:
                 yield from self.doc_queue.put(None)
                 break
 
+            start_time = time.time()
             data = yield from self.loop.run_in_executor(self.executor,
                     parse_document, doc)
+            print("--- %s ms ---" % ((time.time() - start_time) * 1000))
             yield from self.exporter.export(data)
 
 
@@ -61,6 +64,7 @@ def parse_document(data):
 
     name_sale = NAME_PATTERN.search(doc_text)
     if not name_sale:
+        print("...Done")
         return []
 
     res["type"] = "sale"
@@ -79,7 +83,6 @@ def parse_document(data):
     if price:
         res["price"] = price.group("price")
         res["price_type"] = "per_meter" if price.group("type") else "total"
-
     return [res]
 
 #

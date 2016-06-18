@@ -11,10 +11,11 @@ thread_pool_size = 4
 
 @asyncio.coroutine
 def generate_data(loop, executor):
-    doc_queue = asyncio.Queue(10)
-    scraper = Scraper(doc_queue)
+    doc_queue = asyncio.Queue()
+    scraper = Scraper(loop, doc_queue)
     exporter = CsvExporter("export.csv")
-    parser = Parser(loop, executor, doc_queue, exporter, thread_pool_size)
+    parser = Parser(loop, executor, doc_queue, exporter,
+        thread_pool_size)
 
     try:
         scraper_task = loop.create_task(scraper.start_scraping())

@@ -2,12 +2,13 @@ import aiohttp
 import asyncio
 import concurrent
 import urllib.parse
+import time
 from pyquery import PyQuery as pq
 
 
 class Scraper:
-    def __init__(self, queue):
-        self._finised = False
+    def __init__(self, loop, queue):
+        self.loop = loop
         self.doc_queue = queue
 
     # TODO: iterate through parameters, pages
@@ -51,22 +52,38 @@ class Scraper:
             return text
 
     @asyncio.coroutine
+    def _generate_doc(self, doc):
+        url = doc.attrib.get("edesky_text_url")
+        doc_text_content = yield from self._get_txt_doc_content(url)
+
+        doc_with_text = {
+            "dashboard_id": doc.attrib.get("dashboard_id"),
+            "doc_name": doc.attrib.get("name"),
+            "doc_text_url": doc.attrib.get("edesky_text_url"),
+            "doc_orig_url": doc.attrib.get("orig_url"),
+            "doc_text_content": doc_text_content
+        }
+        yield from self.doc_queue.put(doc_with_text)
+
+    @asyncio.coroutine
     def _generate_docs(self, xml_data):
 
         src = pq(xml_data.encode('utf-8'))
 
+        tasks = []
         for doc in src("document"):
-            doc_text_content = yield from self._get_txt_doc_content(doc.attrib.get("edesky_text_url"))
+            task = self.loop.create_task(self._generate_doc(doc))
+            tasks.append(task)
 
-            doc = {
-                "dashboard_id": doc.attrib.get("dashboard_id"),
-                "doc_name": doc.attrib.get("name"),
-                "doc_text_url": doc.attrib.get("edesky_text_url"),
-                "doc_orig_url": doc.attrib.get("orig_url"),
-                "doc_text_content": doc_text_content
-            }
+        try:
+            yield from asyncio.gather(*tasks, loop = self.loop)
+        except asyncio.CancelledError:
+                pass
+        finally:
+            for task in tasks:
+                task.cancel()
+            yield from asyncio.wait(tasks)
+            # Sent poisonous pill
+            yield from self.doc_queue.put(None)
 
-            yield from self.doc_queue.put(doc)
 
-        # Sent poisonous pill
-        yield from self.doc_queue.put(None)
