@@ -49,7 +49,9 @@ class Scraper:
             yield from session.close()
             return text
 
-    def _retrieve_txt_docs(self, xml_data):
+    @asyncio.coroutine
+    def _generate_docs(self, xml_data):
+
         src = pq(xml_data.encode('utf-8'))
 
         for doc in src("document"):
@@ -62,12 +64,6 @@ class Scraper:
                 "doc_text_content": doc_text_content
             }
 
-            yield doc
-
-    @asyncio.coroutine
-    def _generate_docs(self, xml_data):
-
-        for doc in self._retrieve_txt_docs(xml_data):
             yield from self.doc_queue.put(doc)
 
         # Sent poisonous pill

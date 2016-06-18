@@ -15,7 +15,7 @@ def generate_data(loop, executor):
     try:
         scraper_task = loop.create_task(scraper.start_scraping())
         parser_task = loop.create_task(parser.start_processing())
-        yield from asyncio.gather(scraper_task, loop = loop)
+        yield from asyncio.gather(scraper_task, parser_task, loop = loop)
     except asyncio.CancelledError:
             pass
     finally:
