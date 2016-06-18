@@ -11,10 +11,10 @@ class ElasticScraper:
         self.doc_queue = queue
 
     def get_query(self):
-        search_text = "prodej"
-        from_date = "2016-04-18T21:12:41.028+02:00"
+        search_text = "prodej~"
+        from_date = "2016-01-01"
         return {
-            "size": 20000,
+            "size": 500000,
             "query": {
                 "filtered": {
                     "query": {
@@ -27,11 +27,21 @@ class ElasticScraper:
                         "bool": {
                             "must": [
                                 {
-                                    "range":{
+                                    "range": {
                                         "created_at":{
                                             "from": from_date,
                                             "include_lower": False
                                         }
+                                    }
+                                },
+                                {
+                                    "terms": {
+                                        "dashboard_id": [
+                                            109, 110, 115, 116, 117, 118, 119, 120, 121, 138, 143, 159, 166, 167, 168,
+                                            169, 170, 171, 172, 173, 174, 175, 176, 196, 864, 865, 866, 867, 868, 869,
+                                            870, 871, 872, 873, 874, 875, 876, 877, 878, 879, 880, 881, 882, 883, 884,
+                                            885, 886, 887, 888, 889, 890, 891, 892, 893, 894, 895,
+                                        ]
                                     }
                                 }
                             ]
