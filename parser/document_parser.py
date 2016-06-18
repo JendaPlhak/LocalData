@@ -20,6 +20,7 @@ def parse_document(data):
     res = {
         "dashboard_id": data["dashboard_id"],
         "edesky_id": data["edesky_id"],
+        "publish_date": data["publish_date"],
         "type": "sale"
     }
 

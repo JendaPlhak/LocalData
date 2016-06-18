@@ -66,9 +66,8 @@ class ElasticScraper:
             "dashboard_id": hit["_source"]["dashboard_id"],
             "doc_name": hit["_source"]["name"],
             "edesky_id": hit["_id"],
-            "doc_text_url": "",
-            "doc_orig_url": "",
-            "doc_text_content": hit["_source"]["attachments_content"]
+            "doc_text_content": hit["_source"]["attachments_content"],
+            "publish_date": hit["_source"]["created_at"][0:10]
         }
         yield from self.doc_queue.put(doc_with_text)
 

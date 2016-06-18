@@ -35,7 +35,7 @@ def generate_data(args, loop, executor):
         parser_task.cancel()
 
     path = "data/price_data_{0:%Y-%m-%d_%H-%M-%S}".format(datetime.now())
-    # exporter.upload_to_S3("cz-whatthehack-local-information", path)
+    exporter.upload_to_S3("cz-whatthehack-local-information", path)
 
 def get_args():
     p = argparse.ArgumentParser()

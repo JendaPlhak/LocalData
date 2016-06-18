@@ -15,7 +15,7 @@ class WebScraper:
         qdict = {
             "keywords": "Kč?m2",
             "created_from": "2016-01-01",
-            # "dashboard_id": "59",
+            "dashboard_id": "59",
             "order": "date",
             "search_with": "es",
             "page": page
@@ -63,9 +63,8 @@ class WebScraper:
             "dashboard_id": doc.attrib.get("dashboard_id"),
             "edesky_id": doc.attrib.get("edesky_id"),
             "doc_name": doc.attrib.get("name"),
-            "doc_text_url": doc.attrib.get("edesky_text_url"),
-            "doc_orig_url": doc.attrib.get("orig_url"),
-            "doc_text_content": doc_text_content
+            "doc_text_content": doc_text_content,
+            "publish_date": doc.attrib.get("created_at")
         }
         yield from self.doc_queue.put(doc_with_text)
 
