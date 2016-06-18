@@ -10,13 +10,14 @@ class Scraper:
         self._finised = False
         self.doc_queue = queue
 
+    # TODO: iterate through parameters, pages
     def _get_query_url(self):
         qdict = {
-            "keywords": "pronájem bytu",
-            "created_from": "2016-04-04",
+            "keywords": "prodej",
+            "created_from": "2016-05-04",
             "dashboard_id": "59",
             "order": "score",
-            "search_with": "sql",
+            "search_with": "es",
             "page": "1"
         }
         qstring = urllib.parse.urlencode(qdict)

@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 
 class Parser:
@@ -35,12 +36,59 @@ class Parser:
                     parse_document, doc)
             yield from self.exporter.export(data)
 
+
+# TODO: add dashboard_id
+# TODO: hledat pronajem
+# TODO: name: hledat ZP
+# NAME_PATTERN = re.compile(r'(záměru? prodeje|ZP )', re.IGNORECASE)
+NAME_PATTERN = re.compile(r'záměru? prodeje', re.IGNORECASE)
+
+HOUSE_NUM_PATTERN = re.compile(r'č\.? ?p\. (?P<num>[0-9]+)', re.IGNORECASE)
+PARCEL_NUM_PATTERN = re.compile(r'parc\. ?č\. (?P<num>[0-9]+/?[0-9]*)', re.IGNORECASE)
+
+# PRICE_PATTERN = re.compile(r'(?P<price>\d[\. \d]*),(?:\-|\d{2})')
+# PRICE_PATTERN = re.compile(r'(?P<price>\d[\. \d]*)(?:[,\.]\-|[,\.]\d{2}| Kč)')
+# PRICE_PATTERN = re.compile(r'(?<=(\D|^))(?P<price>\d{1,3}(?:[\. ]\d{3})*)([,\.]\-|[,\.]\d{2}| Kč)')
+PRICE_PATTERN = re.compile(r'(\D|^)(?P<price>\d+|(\d{1,3}(?:[\. ]\d{3})*))([,\.]\-|[,\.]\d{2}(?=\s)| Kč)')
+
+
 def parse_document(data):
-    return [{
-        "type": "rent",
-        "estate_id": "aaa",
-        "number": 187,
-        "price_type": "total",
-        "price": 2147.4,
-        "dashboard_id": 197
-    }]
+    res = {}
+
+    doc_text = data['doc_name']
+    doc_content = data['doc_text_content']
+
+    name_sale = NAME_PATTERN.search(doc_text)
+    if not name_sale:
+        return
+
+    res["type"] = "sale"
+
+    house_num = HOUSE_NUM_PATTERN.search(doc_content)
+    if house_num:
+        res["estate_id"] = "house_number"
+        res["number"] = house_num.group("num")
+    else:
+        parcel_num = HOUSE_NUM_PATTERN.search(doc_content)
+        if parcel_num:
+            res["estate_id"] = "parcel_number"
+            res["number"] = parcel_num.group("num")
+
+    price = PRICE_PATTERN.search(doc_content)
+    if price:
+        # print(price.group())
+        res["price"] = price.group("price")
+        # TODO
+        res["price_type"] = ""
+
+    # if "425581" in data["doc_text_url"]:
+    #     print(data)
+
+    # print("URL", data["doc_text_url"])
+
+    return [res]
+
+#
+# if __name__ == '__main__':
+#     documents = []
+#     for d in documents:
