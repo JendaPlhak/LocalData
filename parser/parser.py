@@ -60,7 +60,7 @@ def parse_document(data):
 
     name_sale = NAME_PATTERN.search(doc_text)
     if not name_sale:
-        return
+        return []
 
     res["type"] = "sale"
 
