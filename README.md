@@ -9,6 +9,9 @@
   * URL: https://wth.signin.aws.amazon.com/console
   * user: admin
 
+
+test
+
 * bucket: s3://cz-whatthehack-local-information
   * RW access
 
