@@ -59,6 +59,7 @@ class Scraper:
             doc_text_content = yield from self._get_txt_doc_content(doc.attrib.get("edesky_text_url"))
 
             doc = {
+                "dashboard_id": doc.attrib.get("dashboard_id"),
                 "doc_name": doc.attrib.get("name"),
                 "doc_text_url": doc.attrib.get("edesky_text_url"),
                 "doc_orig_url": doc.attrib.get("orig_url"),
