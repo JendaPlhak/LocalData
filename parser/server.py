@@ -4,6 +4,8 @@ import concurrent
 from scraper import Scraper
 from parser import Parser
 from exporter import CsvExporter
+from datetime import datetime
+
 
 thread_pool_size = 4
 
@@ -23,6 +25,9 @@ def generate_data(loop, executor):
     finally:
         scraper_task.cancel()
         parser_task.cancel()
+
+    path = "data/price_data_{0:%Y-%m-%d_%H-%M-%S}".format(datetime.now())
+    exporter.upload_to_S3("cz-whatthehack-local-information", path)
 
 
 if __name__ == '__main__':

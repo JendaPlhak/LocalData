@@ -36,4 +36,11 @@ class Parser:
             yield from self.exporter.export(data)
 
 def parse_document(data):
-    return "WEEEE"
+    return [{
+        "type": "rent",
+        "estate_id": "aaa",
+        "number": 187,
+        "price_type": "total",
+        "price": 2147.4,
+        "dashboard_id": 197
+    }]
