@@ -5,12 +5,14 @@ from scraper import Scraper
 from parser import Parser
 from exporter import CsvExporter
 
+thread_pool_size = 4
+
 @asyncio.coroutine
 def generate_data(loop, executor):
     doc_queue = asyncio.Queue(10)
     scraper = Scraper(doc_queue)
     exporter = CsvExporter("export.csv")
-    parser = Parser(loop, executor, doc_queue, exporter)
+    parser = Parser(loop, executor, doc_queue, exporter, thread_pool_size)
 
     try:
         scraper_task = loop.create_task(scraper.start_scraping())
@@ -20,11 +22,10 @@ def generate_data(loop, executor):
             pass
     finally:
         scraper_task.cancel()
+        parser_task.cancel()
 
 
 if __name__ == '__main__':
-
-    thread_pool_size = 2
 
     loop = asyncio.get_event_loop()
     executor = concurrent.futures.ProcessPoolExecutor(thread_pool_size)

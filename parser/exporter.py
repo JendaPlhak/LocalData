@@ -8,3 +8,4 @@ class CsvExporter:
     @asyncio.coroutine
     def export(self, data):
         print(data)
+# prodej/pronajem, c.parc/c.popis, c.desky, price, celkova/za metr
