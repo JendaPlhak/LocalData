@@ -5,8 +5,7 @@ import urllib.parse
 import time
 from pyquery import PyQuery as pq
 
-
-class Scraper:
+class WebScraper:
     def __init__(self, loop, queue):
         self.loop = loop
         self.doc_queue = queue
@@ -25,11 +24,10 @@ class Scraper:
         return "https://edesky.cz/api/v1/documents?" + qstring
 
     @asyncio.coroutine
-    def _do_query(self, page):
+    def _get_data(self, url):
         try:
             session = aiohttp.ClientSession()
-            print(self._get_query_url(page))
-            response = yield from session.get(self._get_query_url(page))
+            response = yield from session.get(url)
             assert (response.status == 200)
             text = yield from response.text()
         finally:
@@ -43,7 +41,7 @@ class Scraper:
 
         while page <= pages_total:
             print("---------------------Scraping page %d" % page)
-            xml_data = yield from self._do_query(page)
+            xml_data = yield from self._get_data(self._get_query_url(page))
             yield from self._generate_docs(xml_data)
 
             pages_total = self._get_total_pages(xml_data)
@@ -56,22 +54,10 @@ class Scraper:
         src = pq(xml_data.encode('utf-8'))
         return int(src("page")[0].attrib.get("total"))
 
-
-    @asyncio.coroutine
-    def _get_txt_doc_content(self, doc_text_url):
-        try:
-            session = aiohttp.ClientSession()
-            response = yield from session.get(doc_text_url)
-            assert (response.status == 200)
-            text = yield from response.text()
-        finally:
-            yield from session.close()
-            return text
-
     @asyncio.coroutine
     def _generate_doc(self, doc):
         url = doc.attrib.get("edesky_text_url")
-        doc_text_content = yield from self._get_txt_doc_content(url)
+        doc_text_content = yield from self._get_data(url)
 
         doc_with_text = {
             "dashboard_id": doc.attrib.get("dashboard_id"),
@@ -101,5 +87,3 @@ class Scraper:
             for task in tasks:
                 task.cancel()
             yield from asyncio.wait(tasks)
-
-
