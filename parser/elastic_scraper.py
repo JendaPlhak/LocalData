@@ -43,7 +43,7 @@ class ElasticScraper:
 
     @asyncio.coroutine
     def start_scraping(self):
-        es = Elasticsearch()
+        es = Elasticsearch(['localhost', '10.0.3.248'])
         result = es.search(index="documents_production", body=self.get_query())
 
         for hit in result['hits']['hits']:
@@ -55,6 +55,7 @@ class ElasticScraper:
         doc_with_text = {
             "dashboard_id": hit["_source"]["dashboard_id"],
             "doc_name": hit["_source"]["name"],
+            "edesky_id": hit["_id"],
             "doc_text_url": "",
             "doc_orig_url": "",
             "doc_text_content": hit["_source"]["attachments_content"]
