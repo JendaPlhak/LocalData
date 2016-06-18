@@ -1,0 +1,8 @@
+type,estate_id,number,price_type,price,dashboard_id,edesky_id
+sale,parcel_number,53,total,20,791,435064
+sale,parcel_number,1177,per_meter,3.000,116,431500
+sale,parcel_number,150,total,550,597,391217
+sale,parcel_number,1970,per_meter,1200,204,380928
+sale,parcel_number,2484,total,25,426,379794
+sale,parcel_number,197,total,20,791,372830
+sale,parcel_number,2821,total,3.000,116,308197
