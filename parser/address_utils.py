@@ -89,7 +89,7 @@ class AddressValidator:
 
         for gc in geocoders:
             gc, key, accuracy, allowed_accuracy = gc
-            args = [gc]
+            args = [self._get_address_line()]
             kwargs = {}
             if key:
                 kwargs["key"] = key

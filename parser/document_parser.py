@@ -80,11 +80,11 @@ def validate_address(street, number):
     lat_lon = None
 
     if (len(split) == 1):
-        a = AddressValidator(street, descr_num=number)
+        a = AddressValidator(street, house_num=number)
         lat_lon = a.lat_lon()
 
         if lat_lon is None:
-            a = AddressValidator(street, house_num=number)
+            a = AddressValidator(street, descr_num=number)
             lat_lon = a.lat_lon()
     else:
         a = AddressValidator(street, descr_num=split[0], house_num=split[1])
