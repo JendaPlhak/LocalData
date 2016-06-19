@@ -6,11 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.wth.localinfo.Utils;
+import com.wth.localinfo.model.MappedParams;
 
 /**
  * Reads database stored data and maps them based on provided header.
@@ -19,25 +18,28 @@ public class JDBCReader {
 
     private final String[] mTableHeader;
 
+    /** Table for loading data after transformation. */
+    private final static String TRANSFORMATION_TABLE_NAME = "whatTheHack";
+
     public JDBCReader(String[] mTableHeader) {
         super();
         this.mTableHeader = mTableHeader;
     }
 
-    public List<Map<String, String>> load(int limit) {
-        List<Map<String, String>> mappedRows = new ArrayList<Map<String, String>>();
+    public List<MappedParams> load(int limit) {
+        List<MappedParams> mappedRows = new ArrayList<MappedParams>();
         Connection conn = jdbcInit();
         Statement stmt = null;
         try {
             stmt = conn.createStatement();
 
             String columns = Utils.getItems(mTableHeader);
-            String sql = "SELECT " + columns + " FROM whatTheHack limit "+limit;
+            String sql = "SELECT " + columns + " FROM " + TRANSFORMATION_TABLE_NAME + " limit " + limit;
 
             System.out.println(sql);
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                Map<String, String> params = new HashMap<String, String>();
+                MappedParams params = new MappedParams();
                 for (String column : mTableHeader) {
                     String rowValue = rs.getString(column);
                     params.put(column, rowValue);

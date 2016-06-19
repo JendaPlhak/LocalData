@@ -2,8 +2,8 @@ package com.wth.localinfo.writer;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
+import com.wth.localinfo.model.MappedParams;
 import com.wth.localinfo.ws.Queries;
 import com.wth.localinfo.ws.WSClient;
 
@@ -19,8 +19,8 @@ public class RemoteWriter {
         this.mWS = mWS;
     }
 
-    public void remoteWrite(List<Map<String, String>> rowsWithParams) throws IOException {
-        for (Map<String, String> rowMap : rowsWithParams) {
+    public void remoteWrite(List<MappedParams> rowsWithParams) throws IOException {
+        for (MappedParams rowMap : rowsWithParams) {
             mWS.sendRequest(Queries.getInsertRow(rowMap));
         }
     }

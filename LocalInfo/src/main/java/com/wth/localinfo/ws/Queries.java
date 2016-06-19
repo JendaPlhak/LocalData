@@ -1,8 +1,9 @@
 package com.wth.localinfo.ws;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
+
+import com.wth.localinfo.model.MappedParams;
 
 /**
  * 
@@ -11,7 +12,7 @@ import java.util.Set;
  */
 public class Queries {
 
-    private final static String TABLE_NAME = "wth_demo_table";
+    private final static String TABLE_NAME = "wth_table_ws_filled";
 
     private final static String COLUMN_LAT = "lat";
 
@@ -22,15 +23,16 @@ public class Queries {
     private final static String COLUMN_PRIMARY_KEY = "cartodb_id";
 
     public static String getTableSelect() {
-        return "q=SELECT+*+FROM+wth_demo_table&api_key=d05fa756f999fc42852c6513cee04a29386dd87d";
+        return "q=SELECT+*+FROM+" + TABLE_NAME + "&api_key=d05fa756f999fc42852c6513cee04a29386dd87d";
     }
 
     public static String getInsertMockedDataRow() {
-        return "q=INSERT+INTO+wth_demo_table(the_geom,lon,lat,description)VALUES(ST_GeomFromText('POINT(14.4373283642+50.0848113671)',4326),50.0848113671,14.4373283642,'api_inserted')&api_key=d05fa756f999fc42852c6513cee04a29386dd87d";
+        return "q=INSERT+INTO+" + TABLE_NAME
+                + "(the_geom,lon,lat,description)VALUES(ST_GeomFromText('POINT(14.4373283642+50.0848113671)',4326),50.0848113671,14.4373283642,'api_inserted')&api_key=d05fa756f999fc42852c6513cee04a29386dd87d";
     }
 
-    public static String getInsertRow(Map<String, String> params) {
-        StringBuilder query = new StringBuilder("q=INSERT+INTO+wth_table_ws_filled");
+    public static String getInsertRow(MappedParams params) {
+        StringBuilder query = new StringBuilder("q=INSERT+INTO+" + TABLE_NAME);
         StringBuilder columnsBuilder = new StringBuilder();
         StringBuilder valuesBuilder = new StringBuilder();
         Set<String> columns = params.keySet();

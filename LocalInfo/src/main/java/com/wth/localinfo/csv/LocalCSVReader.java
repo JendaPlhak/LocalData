@@ -4,9 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.wth.localinfo.Utils;
+import com.wth.localinfo.model.MappedParams;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -22,8 +22,8 @@ public class LocalCSVReader {
         return header;
     }
 
-    public List<Map<String, String>> load(String file) throws IOException {
-        List<Map<String, String>> mappedLines = new ArrayList<Map<String, String>>();
+    public List<MappedParams> load(String file) throws IOException {
+        List<MappedParams> mappedLines = new ArrayList<MappedParams>();
         CSVReader reader = new CSVReader(new FileReader(file));
 
         // The first line is header definition.
@@ -31,7 +31,7 @@ public class LocalCSVReader {
 
         String[] nextLine;
         while ((nextLine = reader.readNext()) != null) {
-            Map<String, String> params = Utils.prepareParamsMap(header, nextLine);
+            MappedParams params = Utils.prepareParamsMap(header, nextLine);
             mappedLines.add(params);
         }
         reader.close();

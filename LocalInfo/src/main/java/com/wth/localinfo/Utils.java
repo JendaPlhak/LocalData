@@ -1,7 +1,6 @@
 package com.wth.localinfo;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.wth.localinfo.model.MappedParams;
 
 /**
  * 
@@ -10,8 +9,8 @@ import java.util.Map;
  */
 public class Utils {
 
-    public static Map<String, String> prepareParamsMap(String[] header, String[] nextLine) {
-        Map<String, String> params = new HashMap<String, String>();
+    public static MappedParams prepareParamsMap(String[] header, String[] nextLine) {
+        MappedParams params = new MappedParams();
         for (int i = 0; i < header.length; i++) {
             String columnName = header[i];
             params.put(columnName, nextLine[i]);
