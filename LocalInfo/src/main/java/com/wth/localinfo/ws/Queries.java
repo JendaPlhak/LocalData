@@ -14,7 +14,7 @@ import com.wth.localinfo.model.MappedParams;
  */
 public class Queries {
 
-    private final static String TABLE_NAME = "wth_table_ws_filled";
+    private final static String TABLE_NAME = "wth_table_ws_filled_2";
 
     private final static String COLUMN_LAT = "lat";
 
