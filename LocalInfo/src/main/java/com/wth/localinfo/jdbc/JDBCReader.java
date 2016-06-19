@@ -1,8 +1,10 @@
 package com.wth.localinfo.jdbc;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -25,17 +27,39 @@ public class JDBCReader {
         this.mTableHeader = mTableHeader;
     }
 
+    public String[] loadHeader() throws IOException {
+        Connection conn = jdbcInit();
+        Statement stmt = null;
+        ResultSet rs = null;
+        String[] header = null;
+        try {
+            stmt = conn.createStatement();
+            rs = selectAllQuery(stmt, 1);
+            ResultSetMetaData resultMetaData = rs.getMetaData();
+            int columnCount = resultMetaData.getColumnCount();
+            header = new String[columnCount];
+            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                int arrayIndex = columnIndex-1;
+                header[arrayIndex] = resultMetaData.getColumnName(columnIndex);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeQuietly(rs);
+            closeQuietly(stmt);
+            closeQuietly(conn);
+        }
+        return header;
+    }
+
     public List<MappedParams> load(int limit) {
         List<MappedParams> mappedRows = new ArrayList<MappedParams>();
         Connection conn = jdbcInit();
         Statement stmt = null;
+        ResultSet rs = null;
         try {
             stmt = conn.createStatement();
-
-            String sql = "SELECT * FROM " + TRANSFORMATION_TABLE_NAME + " limit " + limit;
-
-            System.out.println(sql);
-            ResultSet rs = stmt.executeQuery(sql);
+            rs = selectAllQuery(stmt, limit);
             while (rs.next()) {
                 MappedParams params = new MappedParams();
                 for (String column : mTableHeader) {
@@ -44,15 +68,21 @@ public class JDBCReader {
                 }
                 mappedRows.add(params);
             }
-            rs.close();
         } catch (SQLException se) {
             // Handle errors for JDBC
             se.printStackTrace();
         } finally {
+            closeQuietly(rs);
             closeQuietly(stmt);
             closeQuietly(conn);
         }
         return mappedRows;
+    }
+
+    private ResultSet selectAllQuery(Statement stmt, int limit) throws SQLException {
+        String sql = "SELECT * FROM " + TRANSFORMATION_TABLE_NAME + " limit " + limit;
+        System.out.println(sql);
+        return stmt.executeQuery(sql);
     }
 
     private Connection jdbcInit() {
@@ -64,7 +94,6 @@ public class JDBCReader {
         }
 
         Connection conn = null;
-
         try {
             conn = DriverManager.getConnection("jdbc:mysql://sh-tapi.keboola.com:3306/sand_662_53090?useUnicode=true&amp;amp;characterEncoding=UTF-8", "user_991",
                     "eK2bH8nK6vW3uK5j");

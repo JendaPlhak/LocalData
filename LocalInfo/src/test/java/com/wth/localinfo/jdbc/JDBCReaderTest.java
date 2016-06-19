@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.wth.localinfo.TestConsts;
 import com.wth.localinfo.TestUtils;
+import com.wth.localinfo.Utils;
 import com.wth.localinfo.csv.LocalCSVReader;
 import com.wth.localinfo.model.MappedParams;
 
@@ -26,6 +27,13 @@ public class JDBCReaderTest {
         List<MappedParams> loadedData = reader.load(defaultLimit);
         TestUtils.consolePrint(loadedData);
         Assert.assertTrue("Loaded data should not be empty.", !loadedData.isEmpty());
+    }
+
+    @Test
+    public void testLoadHeader() throws Exception {
+        String[] header = reader.loadHeader();
+        System.out.println(Utils.getItems(header));
+        Assert.assertNotNull(header);
     }
 
 }
