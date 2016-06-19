@@ -57,6 +57,8 @@ class ElasticScraper:
         es = Elasticsearch(['localhost', '10.0.3.248'])
         result = es.search(index="documents_production", body=self.get_query())
 
+        print('=== ES # of hits:', result['hits']['total'])
+
         for hit in result['hits']['hits']:
             yield from self._process_doc(hit)
         yield from self.doc_queue.put(None)

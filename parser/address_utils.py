@@ -130,7 +130,7 @@ class AddressValidator:
 
 
 if __name__ == '__main__':
-    # a = AddressValidator("Bělehradská", descr_num="660", house_num="85")
-    a = AddressValidator("Vodičkova", descr_num="18")
+    a = AddressValidator("Bělehradská", descr_num="660", house_num="85")
+    # a = AddressValidator("Vodičkova", descr_num="18")
     print("Q:", a._get_address_line())
     print("A:", a.lat_lon(), a.source, a.accuracy)

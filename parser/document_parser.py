@@ -11,11 +11,11 @@ NAME_PATTERN = re.compile(r'záměru? prodeje', re.IGNORECASE)
 HOUSE_NUM_PATTERN = re.compile(r'č\.? ?p\. (?P<num>[0-9]+)', re.IGNORECASE)
 PARCEL_NUM_PATTERN = re.compile(r'parc\. ?č\. (?P<num>[0-9]+/?[0-9]*)', re.IGNORECASE)
 
-# TODO: stopwords
+BASE_ADDRESS_PATTERN = re.compile(r'(.{0,20}\s\p{Lu}\p{Ll}+)', re.U)
 ADDRESS_PATTERN = re.compile(r' (?P<street>'
-                             r'(?:U |Na |Pod |náměstí |nám |nám. )?'
-                             r'(?:\p{Lu}\p{Ll}+)'
-                             r'(?: \p{Ll}{3,})?'
+                                r'(?:U |Na |Pod |náměstí |nám |nám. )?'
+                                r'(?:\p{Lu}\p{Ll}{2,})'
+                                r'(?: \p{Ll}{3,})?'
                              r')'
                              r' (?P<num>\d+(?:/\d+)?)', re.U)
 
@@ -26,7 +26,6 @@ PRICE_PATTERN = re.compile(
     r'(\D|^)(?P<price>\d+|(\d{1,3}(?:[\. ]\d{3})*))([,\.]\-|[,\.]\d{2}(?=\s)| Kč)(?P<type>(?:\/|1)(?:(m|rn)2))?')
 
 
-# TODO: search multiple
 def parse_document(data):
     res = {
         "dashboard_id": data["dashboard_id"],
@@ -38,17 +37,22 @@ def parse_document(data):
     doc_text = data['doc_name']
     doc_content = data['doc_text_content']
 
-    # TODO
     name_sale = NAME_PATTERN.search(doc_text)
     if not name_sale:
         return []
 
-    address = ADDRESS_PATTERN.search(doc_content)
-    if not address:
-        return []
+    address_context = BASE_ADDRESS_PATTERN.search(doc_content)
 
-    res['address_street'] = address.group("street")
-    res['address_num'] = address.group("num")
+    if address_context:
+        context = address_context.group(0)
+        if context:
+            address = ADDRESS_PATTERN.search(doc_content)
+            if not address:
+                # print(address_context.groups())
+                return []
+
+            res['address_street'] = address.group("street")
+            res['address_num'] = address.group("num")
 
     parcel_num = HOUSE_NUM_PATTERN.search(doc_content)
     if parcel_num:
@@ -66,9 +70,3 @@ def parse_document(data):
         res["price_type"] = "per_meter" if price.group("type") else "total"
 
     return [res]
-
-
-#
-# if __name__ == '__main__':
-#     documents = []
-#     for d in documents:
