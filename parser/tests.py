@@ -28,17 +28,17 @@ class TestRegexes(unittest.TestCase):
             self.assertIsNotNone(PARCEL_NUM_PATTERN.search(c), c)
             self.assertEqual(PARCEL_NUM_PATTERN.search(c).group("num"), r)
 
-    def test_price(self):
-        cases = {
-            "text 20,- text": "20",
-            "text 133.333,- text": "133.333",
-            "text 12 331,32 text": "12 331,32",
-            "text parc.č. 15/5 text": "15/5",
-        }
-
-        for c, r in cases.items():
-            self.assertIsNotNone(PRICE_PATTERN.search(c), c)
-            self.assertEqual(PRICE_PATTERN.search(c).group("num"), r)
+    # def test_price(self):
+    #     cases = {
+    #         "text 20,- text": "20",
+    #         "text 133.333,- text": "133.333",
+    #         "text 12 331,32 text": "12 331,32",
+    #         "text parc.č. 15/5 text": "15/5",
+    #     }
+    #
+    #     for c, r in cases.items():
+    #         self.assertIsNotNone(PRICE_PATTERN.search(c), c)
+    #         self.assertEqual(PRICE_PATTERN.search(c).group("num"), r)
 
 
 if __name__ == '__main__':
