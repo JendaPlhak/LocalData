@@ -56,7 +56,6 @@ def parse_document(data):
     if location is None:
         return []
 
-    print(location)
     res['address_street'] = address.group("street")
     res['address_num'] = address.group("num")
     res['latitude'] = location[0][0]
