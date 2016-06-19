@@ -44,7 +44,11 @@ def parse_document(data):
 
     lat_lon = None
     for address in ADDRESS_PATTERN.finditer(doc_content):
+        if address.group("street") == "Praha":
+            continue
+
         lat_lon = validate_address(address.group("street"), address.group("num"))
+
         if lat_lon:
             break
 
