@@ -31,6 +31,7 @@ def parse_document(data):
     res = {
         "dashboard_id": data["dashboard_id"],
         "edesky_id": data["edesky_id"],
+        "edesky_url": data["edesky_url"],
         "publish_date": data["publish_date"],
         "type": "sale"
     }
@@ -42,23 +43,24 @@ def parse_document(data):
     if not name_sale:
         return []
 
-    lat_lon = None
+    location = None
     for address in ADDRESS_PATTERN.finditer(doc_content):
         if address.group("street") == "Praha":
             continue
 
-        lat_lon = validate_address(address.group("street"), address.group("num"))
+        location = validate_address(address.group("street"), address.group("num"))
 
-        if lat_lon:
+        if location:
             break
 
-    if lat_lon is None:
+    if location is None:
         return []
 
     res['address_street'] = address.group("street")
     res['address_num'] = address.group("num")
-    res['latitude'] = lat_lon[0]
-    res['longitude'] = lat_lon[1]
+    res['latitude'] = location[0][0]
+    res['longitude'] = location[0][1]
+    res['address_code'] = location[1]
 
     parcel_num = HOUSE_NUM_PATTERN.search(doc_content)
     if parcel_num:
@@ -85,13 +87,13 @@ def validate_address(street, number):
 
     if (len(split) == 1):
         a = AddressValidator(street, house_num=number)
-        lat_lon = a.lat_lon()
+        lat_lon = a.get_location()
 
         if lat_lon is None:
             a = AddressValidator(street, descr_num=number)
-            lat_lon = a.lat_lon()
+            lat_lon = a.get_location()
     else:
         a = AddressValidator(street, descr_num=split[0], house_num=split[1])
-        lat_lon = a.lat_lon()
+        lat_lon = a.get_location()
 
     return lat_lon

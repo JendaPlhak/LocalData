@@ -15,7 +15,7 @@ class CsvExporter:
 
         fieldnames = ["type", "estate_id", "number", "price_type", "price",
             "dashboard_id", "edesky_id", "publish_date", "address_street",
-            "address_num", "latitude", "longitude"]
+            "address_num", "latitude", "longitude", "edesky_url", "address_code"]
         self.writer = csv.DictWriter(self.file, fieldnames=fieldnames)
         self.writer.writeheader()
 

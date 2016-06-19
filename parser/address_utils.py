@@ -79,7 +79,7 @@ class AddressValidator:
 
         self.source = 'table'
         # X=lon, Y=lat in dataset
-        return res["Y"], res["X"]
+        return (res["Y"], res["X"]), res["Kód ADM"]
 
     def step_geocoding(self):
         res = None
@@ -103,11 +103,11 @@ class AddressValidator:
                         return None
 
                 self.source = gc
-                return res.latlng
+                return (res.latlng, None) if res.latlng else None
 
         return res
 
-    def lat_lon(self):
+    def get_location(self):
         # cache
         res = self.r.get(self._get_address_line())
         if res:
@@ -133,4 +133,4 @@ if __name__ == '__main__':
     a = AddressValidator("Bělehradská", descr_num="660", house_num="85")
     # a = AddressValidator("Vodičkova", descr_num="18")
     print("Q:", a._get_address_line())
-    print("A:", a.lat_lon(), a.source, a.accuracy)
+    print("A:", a.get_location(), a.source, a.accuracy)

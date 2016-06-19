@@ -69,6 +69,7 @@ class ElasticScraper:
             "dashboard_id": hit["_source"]["dashboard_id"],
             "doc_name": hit["_source"]["name"],
             "edesky_id": hit["_id"],
+            "edesky_url": "https://edesky.cz/dokument/" + hit["_id"],
             "doc_text_content": hit["_source"]["attachments_content"],
             "publish_date": hit["_source"]["created_at"][0:10]
         }
