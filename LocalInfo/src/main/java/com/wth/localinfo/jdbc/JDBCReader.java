@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wth.localinfo.Utils;
 import com.wth.localinfo.model.MappedParams;
 
 /**
@@ -33,8 +32,7 @@ public class JDBCReader {
         try {
             stmt = conn.createStatement();
 
-            String columns = Utils.getItems(mTableHeader);
-            String sql = "SELECT " + columns + " FROM " + TRANSFORMATION_TABLE_NAME + " limit " + limit;
+            String sql = "SELECT * FROM " + TRANSFORMATION_TABLE_NAME + " limit " + limit;
 
             System.out.println(sql);
             ResultSet rs = stmt.executeQuery(sql);
@@ -68,7 +66,7 @@ public class JDBCReader {
         Connection conn = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://sh-tapi.keboola.com:3306/sand_662_53090", "user_991",
+            conn = DriverManager.getConnection("jdbc:mysql://sh-tapi.keboola.com:3306/sand_662_53090?useUnicode=true&amp;amp;characterEncoding=UTF-8", "user_991",
                     "eK2bH8nK6vW3uK5j");
 
         } catch (SQLException e) {

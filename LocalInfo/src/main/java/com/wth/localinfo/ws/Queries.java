@@ -1,5 +1,7 @@
 package com.wth.localinfo.ws;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -31,7 +33,7 @@ public class Queries {
                 + "(the_geom,lon,lat,description)VALUES(ST_GeomFromText('POINT(14.4373283642+50.0848113671)',4326),50.0848113671,14.4373283642,'api_inserted')&api_key=d05fa756f999fc42852c6513cee04a29386dd87d";
     }
 
-    public static String getInsertRow(MappedParams params) {
+    public static String getInsertRow(MappedParams params) throws UnsupportedEncodingException {
         StringBuilder query = new StringBuilder("q=INSERT+INTO+" + TABLE_NAME);
         StringBuilder columnsBuilder = new StringBuilder();
         StringBuilder valuesBuilder = new StringBuilder();
@@ -55,7 +57,7 @@ public class Queries {
                 // String insertedValue = columnValue.isEmpty() ? "''" :
                 // columnValue;
                 String insertedValue = columnValue;
-                valuesBuilder.append("'" + insertedValue + "'");
+                valuesBuilder.append("'" + URLEncoder.encode(insertedValue , "UTF8" ) + "'");
                 break;
             }
 
