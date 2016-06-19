@@ -13,10 +13,10 @@ HOUSE_NUM_PATTERN = re.compile(r'č\.? ?p\. (?P<num>[0-9]+)', re.IGNORECASE)
 PARCEL_NUM_PATTERN = re.compile(r'parc\. ?č\. (?P<num>[0-9]+/?[0-9]*)', re.IGNORECASE)
 
 BASE_ADDRESS_PATTERN = re.compile(r'(.{0,20}\s\p{Lu}\p{Ll}+)', re.U)
-ADDRESS_PATTERN = re.compile(r' (?P<street>'
-                                r'(?:U |Na |Pod |náměstí |nám |nám. )?'
-                                r'(?:\p{Lu}\p{Ll}{2,})'
-                                r'(?: \p{Ll}{3,})?'
+ADDRESS_PATTERN = re.compile(r'([ ,]?)(?P<street>'
+                                r'(U |Na |Pod |náměstí |nám |nám. )?'
+                                r'(\p{Lu}\p{Ll}{3,})( \p{Lu}\p{Ll}{3,})?'
+                                r'( \p{Ll}{3,})?'
                              r')'
                              r' (?P<num>\d+(?:/\d+)?)', re.U)
 
@@ -45,7 +45,7 @@ def parse_document(data):
 
     location = None
     for address in ADDRESS_PATTERN.finditer(doc_content):
-        if address.group("street") == "Praha":
+        if re.search("Praha", address.group("street")):
             continue
 
         location = validate_address(address.group("street"), address.group("num"))
@@ -56,8 +56,7 @@ def parse_document(data):
     if location is None:
         return []
 
-    res['address_street'] = address.group("street")
-    res['address_num'] = address.group("num")
+    res['address'] = " ".join([address.group("street"), address.group("num")])
     res['latitude'] = location[0][0]
     res['longitude'] = location[0][1]
     res['address_code'] = location[1]
@@ -83,17 +82,17 @@ def parse_document(data):
 def validate_address(street, number):
 
     split = number.split("/")
-    lat_lon = None
+    loc_info = None
 
     if (len(split) == 1):
         a = AddressValidator(street, house_num=number)
-        lat_lon = a.get_location()
+        loc_info = a.get_location()
 
-        if lat_lon is None:
+        if loc_info is None:
             a = AddressValidator(street, descr_num=number)
-            lat_lon = a.get_location()
+            loc_info = a.get_location()
     else:
         a = AddressValidator(street, descr_num=split[0], house_num=split[1])
-        lat_lon = a.get_location()
+        loc_info = a.get_location()
 
-    return lat_lon
+    return loc_info

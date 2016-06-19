@@ -8,22 +8,15 @@ import pickle
 import redis
 
 
-# vyheldat kandidaty v textu
-# zkusit match na tabulce adresnich mist (ulic)
-# posledni resort zkusit
-
-
 class AddressValidator:
 
     ADDRESS_TABLE_FILE = os.path.join(os.path.dirname(__file__), os.path.pardir, 'datasets/adresni_mista_wgs84_praha.csv')
 
-    # TODO: gogole accuracy: ROOFTOP
     GEOCODERS = [
-        ('google', None, None, None),
-        # ('google', None, 'accuracy', ['ROOFTOP']),
-        # ('google', None, 'types', ['street_address']),
-        ('mapquest', 'OfSOmTltOxOz7eu5WIvXGFFusOOKERIK', None, None),
-        ('osm', None, None, None)
+        ('google', None, 'accuracy', ['ROOFTOP']),
+        # ('google', None, 'accuracy', ['ROOFTOP', 'GEOMETRIC_CENTER']),
+        ('mapquest', 'OfSOmTltOxOz7eu5WIvXGFFusOOKERIK', 'quality', ['ADDRESS']),
+        ('osm', None, 'quality', ['house'])
         # 'here'
     ]
 
@@ -88,7 +81,7 @@ class AddressValidator:
         random.shuffle(geocoders)
 
         for gc in geocoders:
-            gc, key, accuracy, allowed_accuracy = gc
+            gc, key, accuracy_field, allowed_accuracy = gc
             args = [self._get_address_line()]
             kwargs = {}
             if key:
@@ -97,8 +90,10 @@ class AddressValidator:
             res = getattr(geocoder, gc)(*args, **kwargs)
 
             if res:
-                if self.accuracy and allowed_accuracy:
-                    self.accuracy = getattr(res, accuracy, None) if accuracy else None
+                # print('ACC', allowed_accuracy,)
+                if allowed_accuracy:
+                    self.accuracy = getattr(res, accuracy_field, None) if accuracy_field else None
+                    # print(self.accuracy, self._get_address_line())
                     if self.accuracy not in allowed_accuracy:
                         return None
 
@@ -130,7 +125,8 @@ class AddressValidator:
 
 
 if __name__ == '__main__':
-    a = AddressValidator("Bělehradská", descr_num="660", house_num="85")
+    a = AddressValidator("Na Zderaze", descr_num="260")
+    # a = AddressValidator("Bělehradská", descr_num="660", house_num="85")
     # a = AddressValidator("Vodičkova", descr_num="18")
     print("Q:", a._get_address_line())
     print("A:", a.get_location(), a.source, a.accuracy)
