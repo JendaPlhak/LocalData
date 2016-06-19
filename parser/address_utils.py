@@ -22,8 +22,8 @@ class AddressValidator:
         ('google', None, None, None),
         # ('google', None, 'accuracy', ['ROOFTOP']),
         # ('google', None, 'types', ['street_address']),
-        # ('mapquest', 'OfSOmTltOxOz7eu5WIvXGFFusOOKERIK', None, None),
-        # ('osm', None, None, None)
+        ('mapquest', 'OfSOmTltOxOz7eu5WIvXGFFusOOKERIK', None, None),
+        ('osm', None, None, None)
         # 'here'
     ]
 
@@ -89,7 +89,7 @@ class AddressValidator:
 
         for gc in geocoders:
             gc, key, accuracy, allowed_accuracy = gc
-            args = [gc]
+            args = [self._get_address_line()]
             kwargs = {}
             if key:
                 kwargs["key"] = key

@@ -14,14 +14,15 @@ class CsvExporter:
         self.file = open(filename, "w")
 
         fieldnames = ["type", "estate_id", "number", "price_type", "price",
-            "dashboard_id", "edesky_id", "publish_date", "address_street", "address_num"]
+            "dashboard_id", "edesky_id", "publish_date", "address_street",
+            "address_num", "latitude", "longitude"]
         self.writer = csv.DictWriter(self.file, fieldnames=fieldnames)
         self.writer.writeheader()
 
     @asyncio.coroutine
     def export(self, data):
         for row in data:
-            print(row)
+            # print(row)
             self.writer.writerow(row)
 
     def upload_to_S3(self, bucket_name, filename):

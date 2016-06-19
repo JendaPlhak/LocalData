@@ -65,6 +65,25 @@
     .navbar-inverse .navbar-nav>li>a {
       color: #fff;
     }
+
+    body div.cartodb-searchbox {
+      position: fixed;
+      top: 8px;  right: 15px;
+      width:226px; height:34px;
+      z-index: 1050;
+      margin: 0;
+    }
+    body div.cartodb-searchbox input.text {
+      font-size:16px; width: 180px;
+    }
+    body div.cartodb-searchbox input.search {
+      font-size:16px;
+    }
+
+    @media(max-width: 769px) {
+      body div.cartodb-searchbox {display: none};
+    }
+
   </style>
 
   </head>
@@ -73,26 +92,21 @@
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
-          <div class="navbar-icon-container">
+<!--       <div class="navbar-icon-container">
             <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
             <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
           </div>
+-->
           <a class="navbar-brand" href="#">Lokálka</a>
         </div>
         <div class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="search">
+<!--          <form class="navbar-form navbar-right" role="search" id="search">
             <div class="form-group has-feedback">
-                <span class="twitter-typeahead" style="position: static; display: block; direction: ltr;">
-                  <input id="searchbox" type="text" placeholder="Hledej" class="form-control tt-input" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top;">
-                     <pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre>
-                     <span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
-                  <div class="tt-dataset-Boroughs"></div><div class="tt-dataset-Theaters"></div>
-                  <div class="tt-dataset-Museums"></div><div class="tt-dataset-GeoNames"></div></span>
-                </span>
-                <span id="searchicon" class="fa fa-search form-control-feedback"></span>
+              <input id="searchbox" type="text" placeholder="Hledej" class="form-control tt-input" autocomplete="off" spellcheck="false" dir="auto" style="position: relative; vertical-align: top;">
+              <span id="searchicon" class="fa fa-search form-control-feedback"></span>
             </div>
           </form>
-          <ul class="nav navbar-nav">
+-->          <ul class="nav navbar-nav">
             <li><a href="#" id="btnAbout"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;O projektu</a></li>
             <li class="hidden-xs"><a href="#" id="btnLegenda"><i class="fa fa-list white"></i>&nbsp;&nbsp;Filtrování</a></li>
           </ul>
