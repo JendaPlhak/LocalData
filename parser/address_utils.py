@@ -22,8 +22,8 @@ class AddressValidator:
         ('google', None, None, None),
         # ('google', None, 'accuracy', ['ROOFTOP']),
         # ('google', None, 'types', ['street_address']),
-        # ('mapquest', 'OfSOmTltOxOz7eu5WIvXGFFusOOKERIK', None, None),
-        # ('osm', None, None, None)
+        ('mapquest', 'OfSOmTltOxOz7eu5WIvXGFFusOOKERIK', None, None),
+        ('osm', None, None, None)
         # 'here'
     ]
 
@@ -115,10 +115,10 @@ class AddressValidator:
             return pickle.loads(res)
 
         # table
-        res = self.step_table()
-        if res:
-            self.r.set(self._get_address_line(), pickle.dumps(res))
-            return res
+        # res = self.step_table()
+        # if res:
+        #     self.r.set(self._get_address_line(), pickle.dumps(res))
+        #     return res
 
         # geocoders
         res = self.step_geocoding()
