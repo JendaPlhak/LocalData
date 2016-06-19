@@ -4,6 +4,7 @@ import concurrent
 import time
 from elasticsearch import Elasticsearch
 
+
 class ElasticScraper:
 
     def __init__(self, loop, queue):
