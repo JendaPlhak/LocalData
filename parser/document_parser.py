@@ -13,10 +13,10 @@ HOUSE_NUM_PATTERN = re.compile(r'č\.? ?p\. (?P<num>[0-9]+)', re.IGNORECASE)
 PARCEL_NUM_PATTERN = re.compile(r'parc\. ?č\. (?P<num>[0-9]+/?[0-9]*)', re.IGNORECASE)
 
 BASE_ADDRESS_PATTERN = re.compile(r'(.{0,20}\s\p{Lu}\p{Ll}+)', re.U)
-ADDRESS_PATTERN = re.compile(r' (?P<street>'
-                                r'(?:U |Na |Pod |náměstí |nám |nám. )?'
-                                r'(?:\p{Lu}\p{Ll}{2,})'
-                                r'(?: \p{Ll}{3,})?'
+ADDRESS_PATTERN = re.compile(r'([ ,]?)(?P<street>'
+                                r'(U |Na |Pod |náměstí |nám |nám. )?'
+                                r'(\p{Lu}\p{Ll}{3,})( \p{Lu}\p{Ll}{3,})?'
+                                r'( \p{Ll}{3,})?'
                              r')'
                              r' (?P<num>\d+(?:/\d+)?)', re.U)
 
@@ -44,6 +44,7 @@ def parse_document(data):
         return []
 
     location = None
+    print(ADDRESS_PATTERN.findall(doc_content))
     for address in ADDRESS_PATTERN.finditer(doc_content):
         if address.group("street") == "Praha":
             continue
