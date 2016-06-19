@@ -44,7 +44,6 @@ def parse_document(data):
         return []
 
     location = None
-    print(ADDRESS_PATTERN.findall(doc_content))
     for address in ADDRESS_PATTERN.finditer(doc_content):
         if re.search("Praha", address.group("street")):
             continue
