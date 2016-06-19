@@ -41,7 +41,7 @@
 
     // now, perform any operations you need, e.g. assuming map is a L.Map object:
     map.setZoom(13);
-    map.panTo([50.0819,14.4362]);
+    map.panTo([50.0957,14.4001]);
 
     $(document).ready(function(){
       dataLayer = vis.getLayers()[1].getSubLayer(0);
