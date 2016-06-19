@@ -14,9 +14,12 @@ class CsvExporter:
         self.file = open(filename, "w")
 
         fieldnames = ["type", "estate_id", "number", "price_type", "price",
-            "dashboard_id", "edesky_id", "publish_date", "address_street",
-            "address_num", "latitude", "longitude", "edesky_url", "address_code"]
-        self.writer = csv.DictWriter(self.file, fieldnames=fieldnames)
+            "dashboard_id", "edesky_id", "publish_date", "address",
+            "latitude", "longitude", "edesky_url", "address_code"]
+        dialect = csv.excel
+        dialect.quoting = csv.QUOTE_ALL
+        self.writer = csv.DictWriter(self.file, fieldnames=fieldnames,
+            dialect = dialect)
         self.writer.writeheader()
 
     @asyncio.coroutine
