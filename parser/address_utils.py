@@ -114,7 +114,7 @@ class AddressValidator:
             self.source = 'cache'
             return pickle.loads(res)
 
-        table
+        # table
         res = self.step_table()
         if res:
             self.r.set(self._get_address_line(), pickle.dumps(res))
