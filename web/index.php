@@ -3,8 +3,28 @@
   <div id="sidebar">
    <div id="sidebar1">
     <p>Lokálka vám řekne kolik stojí byty ve lokalitě která vás zajímá</p>
+
+    <p>
+      <h4>Výtah</h4>
+      <div class="btn-group" role="group" aria-label="Výtah">
+        <button type="button" class="btn btn-lg btn-default btn-success" id="btnVytahVyp">je mi jedno</button>
+        <button type="button" class="btn btn-lg btn-default" id="btnVytahZap">chci</button>
+      </div>
+    </p>
+<!--    <br/>
+    <input type="checkbox" aria-label="vytah" id="chbVytah"> chci výtah
+    <br/>
     <p><a class="btn btn-lg btn-success" href="#" role="button" id="btnVytah">S výtahem i bez</a></p>
     <p><a class="btn btn-lg btn-success" href="#" role="button" id="btnPlyn">S plynem i bez</a></p>
+-->
+    <p>
+      <h4>Plyn</h4>
+      <div class="btn-group" role="group" aria-label="Plyn">
+        <button type="button" class="btn btn-lg btn-default btn-success" id="btnPlynVyp">je mi jedno</button>
+        <button type="button" class="btn btn-lg btn-default" id="btnPlynZap">chci</button>
+      </div>
+    </p>
+
     <p>
       <label for="amount">Cena za byt</label>
       <input type="text" id="amount" readonly style="border:0; color:rgb(92, 184, 92); font-weight:bold;">
@@ -13,7 +33,7 @@
    </div>
    <div id="sidebar2" class="hidden" style="font-size:80%">
     <p>Lokálka umožňuje přehledně procházet ceny a další údaje o bytech ve vaší lokalitě.
-       Pomocí hledání, nebo zazoomovánám mapy (kromě kolečka myši a +/- funguje i Shift+drag myší) najděte lokalitu,
+       Pomocí hledání, nebo zazoomovánám mapy (kromě  +/- funguje i Shift+drag myší) najděte lokalitu,
        která vás zajímá. Byty jsou barveny podle ceny a lze je filtrovat. Informace o konkrétním bytě můžete získat najetím na
        něj, kliknutím se zobrazí další info.
     </p>
@@ -23,39 +43,37 @@
       <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY</a> licencí.
     </p>
     <p>
-      Na projektu se podíleli: <b>(prosím napište mi na slack jak chcete být uvedeni a případný  link)</b> <a href="https://github.com/gorn">gorn</a>, 
-
-      .... Veliký dík patří organizátorům hackatlonu, WhatTheHack, skvěle jsme si to užili.
+      Na projektu se podíleli: <b>(prosím napište mi na slack jak chcete být uvedeni a případný  link)</b> <a href="https://github.com/gorn">gorn</a>, Jenda Plhák, Zbyněk Růžička, Zdeněk Softič
+Bert Šváb, Barbora Ulipová, Jan Cibulka a především náš mentor Marek Aufart. Veliký dík patří organizátorům hackatlonu, WhatTheHack, skvěle jsme si to užili.
     </p>
+    <p style="text-align:right"><i>Lokálka team</i></p>
    </div>
   </div>
   <div id="map"></div>
 
     <script>
-      var layerUrl = 'https://localinfo.cartodb.com/api/v2/viz/3212d9c4-35a5-11e6-ae36-0ea31932ec1d/viz.json';
-      var layerUrl = 'https://localinfo.cartodb.com/api/v2/viz/1936f786-35bf-11e6-928d-0ea31932ec1d/viz.json';
-      var layerUrl = 'https://localinfo.cartodb.com/api/v2/viz/559bf61c-35d4-11e6-95a5-0e787de82d45/viz.json';
+      var layerUrl = 'https://localinfo.cartodb.com/api/v2/viz/641d3b26-3609-11e6-b753-0ea31932ec1d/viz.json';
   cartodb.createVis('map', layerUrl)
   .done(function(vis, layers) {
     var map = vis.getNativeMap();
 
     // now, perform any operations you need, e.g. assuming map is a L.Map object:
-    map.setZoom(13);
-    map.panTo([50.0957,14.4001]);
+    map.setZoom(14);
+    map.panTo([50.0713,14.4236]);
 
     $(document).ready(function(){
       dataLayer = vis.getLayers()[1].getSubLayer(0);
 
       function refreshSQL() {
-        var sql = "SELECT * FROM wth_out3 WHERE ";
+        var sql = "SELECT * FROM wth_table_ws_filled_2 WHERE ";
         var min =  $( "#slider-range" ).slider( "values", 0 )/5 * 1000000
         var max =  $( "#slider-range" ).slider( "values", 1 )/5 * 1000000
-        sql = sql + min + " < cena AND cena < " + max 
+        sql = sql + min + " < cena AND cena < " + max
 
-        if ($('#btnVytah').hasClass('zapnuto')) {
+        if ($('#btnVytahZap').hasClass('btn-success')) {
           sql = sql +  " AND vytah='s vytahem'";
         };
-        if ($('#btnPlyn').hasClass('zapnuto')) {
+        if ($('#btnPlynZap').hasClass('btn-success')) {
           sql = sql +  " AND (plyn='plyn z domovniho zasobniku' OR plyn='plyn z verejne site')";
         };
         dataLayer.setSQL(sql);
@@ -74,13 +92,35 @@
       $( "#amount" ).val( $( "#slider-range" ).slider( "values", 0 )/5 +
         " - " + $( "#slider-range" ).slider( "values", 1 )/5 + " mil Kč" );
 
-      $('#btnVytah').on('click', function(){
-        if($(this).hasClass('zapnuto')) { 
-          $(this).html('S výtahem i bez');
-        } else {
-          $(this).html('Jen s výtahem');
+      $('#btnVytahVyp').on('click', function(){
+        if(!$(this).hasClass('btn-success')) { 
+          $(this).toggleClass('btn-success');
+          $('#btnVytahZap').toggleClass('btn-success');
         };
-        $(this).toggleClass('zapnuto');
+        refreshSQL();
+      });
+
+      $('#btnVytahZap').on('click', function(){
+        if(!$(this).hasClass('btn-success')) { 
+          $(this).toggleClass('btn-success');
+          $('#btnVytahVyp').toggleClass('btn-success');
+        };
+        refreshSQL();
+      });
+
+      $('#btnPlynVyp').on('click', function(){
+        if(!$(this).hasClass('btn-success')) { 
+          $(this).toggleClass('btn-success');
+          $('#btnPlynZap').toggleClass('btn-success');
+        };
+        refreshSQL();
+      });
+
+      $('#btnPlynZap').on('click', function(){
+        if(!$(this).hasClass('btn-success')) { 
+          $(this).toggleClass('btn-success');
+          $('#btnPlynVyp').toggleClass('btn-success');
+        };
         refreshSQL();
       });
 
