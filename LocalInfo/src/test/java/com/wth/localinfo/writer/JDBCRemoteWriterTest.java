@@ -12,11 +12,12 @@ public class JDBCRemoteWriterTest {
     @Test
     public void testName() throws Exception {
         RemoteWriter remoteWriter = new RemoteWriter(new WSClient());
-        
+
         String[] header = new LocalCSVReader().loadHeader(TestConsts.CSV_TABLE_HEADER_FILE_NAME);
         JDBCReader reader = new JDBCReader(header);
         int testLimit = 5;
-        remoteWriter.remoteWrite(reader.load(testLimit));
+        int queriesCount = remoteWriter.remoteWrite(reader.load(testLimit));
+        System.out.println("Sent queries... " + queriesCount);
     }
 
 }

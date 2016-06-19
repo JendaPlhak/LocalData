@@ -19,10 +19,13 @@ public class RemoteWriter {
         this.mWS = mWS;
     }
 
-    public void remoteWrite(List<MappedParams> rowsWithParams) throws IOException {
+    public int remoteWrite(List<MappedParams> rowsWithParams) throws IOException {
+        int queriesCount = 0;
         for (MappedParams rowMap : rowsWithParams) {
-            mWS.sendRequest(Queries.getInsertRow(rowMap));
+            mWS.sendPostRequest(Queries.getFormParams(rowMap));
+            queriesCount++;
         }
+        return queriesCount;
     }
 
 }
