@@ -19,7 +19,7 @@ public class JDBCReaderTest {
 
     @Test
     public void testDataPrint() throws Exception {
-        int defaultLimit = 3;
+        int defaultLimit = 5;
         TestUtils.consolePrint(reader.load(defaultLimit));
     }
 

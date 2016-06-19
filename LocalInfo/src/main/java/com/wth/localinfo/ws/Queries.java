@@ -30,7 +30,7 @@ public class Queries {
     }
 
     public static String getInsertRow(Map<String, String> params) {
-        StringBuilder query = new StringBuilder("q=INSERT+INTO+wth_demo_table");
+        StringBuilder query = new StringBuilder("q=INSERT+INTO+wth_table_ws_filled");
         StringBuilder columnsBuilder = new StringBuilder();
         StringBuilder valuesBuilder = new StringBuilder();
         Set<String> columns = params.keySet();

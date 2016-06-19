@@ -6,7 +6,7 @@ import com.wth.localinfo.TestConsts;
 import com.wth.localinfo.csv.LocalCSVReader;
 import com.wth.localinfo.ws.WSClient;
 
-public class RemoteWriterTest {
+public class CSVRemoteWriterTest {
 
     @Test
     public void testName() throws Exception {
