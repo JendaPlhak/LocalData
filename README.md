@@ -12,4 +12,4 @@
 * bucket: s3://cz-whatthehack-local-information
   * RW access
 
-* all credentials on Dropbox, link in the Slack channel 'lokalni_informace'
+* all credentials on Dropbox, link in the [WhatTheHack's Slack](https://whatthehack.slack.com) Slack channel 'lokalni_informace'
