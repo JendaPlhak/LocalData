@@ -1,5 +1,6 @@
 # we need unicode matching provided by alternative regex library
 import regex
+from address_utils import AddressValidator
 re = regex
 
 
@@ -41,18 +42,19 @@ def parse_document(data):
     if not name_sale:
         return []
 
-    address_context = BASE_ADDRESS_PATTERN.search(doc_content)
+    lat_lon = None
+    for address in ADDRESS_PATTERN.finditer(doc_content):
+        lat_lon = validate_address(address.group("street"), address.group("num"))
+        if lat_lon:
+            break
 
-    if address_context:
-        context = address_context.group(0)
-        if context:
-            address = ADDRESS_PATTERN.search(doc_content)
-            if not address:
-                # print(address_context.groups())
-                return []
+    if lat_lon is None:
+        return []
 
-            res['address_street'] = address.group("street")
-            res['address_num'] = address.group("num")
+    res['address_street'] = address.group("street")
+    res['address_num'] = address.group("num")
+    res['latitude'] = lat_lon[0]
+    res['longitude'] = lat_lon[1]
 
     parcel_num = HOUSE_NUM_PATTERN.search(doc_content)
     if parcel_num:
@@ -70,3 +72,22 @@ def parse_document(data):
         res["price_type"] = "per_meter" if price.group("type") else "total"
 
     return [res]
+
+
+def validate_address(street, number):
+
+    split = number.split("/")
+    lat_lon = None
+
+    if (len(split) == 1):
+        a = AddressValidator(street, descr_num=number)
+        lat_lon = a.lat_lon()
+
+        if lat_lon is None:
+            a = AddressValidator(street, house_num=number)
+            lat_lon = a.lat_lon()
+    else:
+        a = AddressValidator(street, descr_num=split[0], house_num=split[1])
+        lat_lon = a.lat_lon()
+
+    return lat_lon
