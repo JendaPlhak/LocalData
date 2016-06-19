@@ -8,16 +8,10 @@ import pickle
 import redis
 
 
-# vyheldat kandidaty v textu
-# zkusit match na tabulce adresnich mist (ulic)
-# posledni resort zkusit
-
-
 class AddressValidator:
 
     ADDRESS_TABLE_FILE = os.path.join(os.path.dirname(__file__), os.path.pardir, 'datasets/adresni_mista_wgs84_praha.csv')
 
-    # TODO: gogole accuracy: ROOFTOP
     GEOCODERS = [
         ('google', None, 'accuracy', ['ROOFTOP']),
         # ('google', None, 'accuracy', ['ROOFTOP', 'GEOMETRIC_CENTER']),
